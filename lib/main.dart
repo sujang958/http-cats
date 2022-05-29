@@ -422,7 +422,7 @@ class _HttpCatPageState extends State<HttpCatPage> {
       backgroundColor: Colors.black,
       child: SafeArea(
           child: Container(
-              padding: EdgeInsets.only(top: 56.0, bottom: 42.0),
+              padding: EdgeInsets.only(top: 46.0, bottom: 42.0),
               child: Column(
                 children: [
                   Align(
@@ -438,7 +438,7 @@ class _HttpCatPageState extends State<HttpCatPage> {
                   Expanded(
                       child: SingleChildScrollView(
                           padding: EdgeInsets.symmetric(
-                              vertical: 28.0, horizontal: 32.0),
+                              vertical: 20.0, horizontal: 32.0),
                           child: Align(
                               alignment: Alignment.centerLeft,
                               child: Column(
