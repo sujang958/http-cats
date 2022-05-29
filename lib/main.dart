@@ -362,43 +362,66 @@ class _HttpCatListState extends State<HttpCatListPage> {
         content: 'Network Connect Timeout Error, literally.')
   ];
 
+  bool isCaching = true;
+
+  @override
+  void didChangeDependencies() {
+    setState(() {
+      isCaching = true;
+    });
+    Future.wait(_httpStatusCodes.map((httpStatus) => precacheImage(
+        Image.network("https://http.cat/${httpStatus.statusCode}").image,
+        context))).then((_) => setState(() => isCaching = false));
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: SafeArea(
-        child: Container(
-          padding: EdgeInsets.symmetric(vertical: 62.0),
-          child: ListView.builder(
-            itemCount: _httpStatusCodes.length,
-            itemBuilder: (_, index) {
-              final statusCode = _httpStatusCodes.elementAt(index);
-              return Hero(
-                tag: '__cat_${statusCode.statusCode}',
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (ctx) =>
-                                HttpCatPage(statusCode: statusCode)));
+      body: isCaching
+          ? Center(
+              child: Transform.scale(
+                scale: 1.5,
+                child: CupertinoActivityIndicator(),
+              ),
+            )
+          : SafeArea(
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 62.0),
+                child: ListView.builder(
+                  itemCount: _httpStatusCodes.length,
+                  itemBuilder: (_, index) {
+                    final statusCode = _httpStatusCodes.elementAt(index);
+                    return ListTile(
+                        contentPadding: EdgeInsets.symmetric(vertical: 10.0),
+                        title: Hero(
+                          tag: '__cat_${statusCode.statusCode}',
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (ctx) =>
+                                          HttpCatPage(statusCode: statusCode)));
+                            },
+                            child: Image.network(
+                              'https://http.cat/${statusCode.statusCode}',
+                              fit: BoxFit.contain,
+                              alignment: Alignment.center,
+                              height: 300.0,
+                              loadingBuilder: (_, child, loadingProgress) =>
+                                  loadingProgress == null
+                                      ? child
+                                      : Center(
+                                          child: CupertinoActivityIndicator()),
+                            ),
+                          ),
+                        ));
                   },
-                  child: Image.network(
-                    'https://http.cat/${statusCode.statusCode}',
-                    fit: BoxFit.contain,
-                    alignment: Alignment.center,
-                    height: 300.0,
-                    loadingBuilder: (_, child, loadingProgress) =>
-                        loadingProgress == null
-                            ? child
-                            : Center(child: CupertinoActivityIndicator()),
-                  ),
                 ),
-              );
-            },
-          ),
-        ),
-      ),
+              ),
+            ),
     );
   }
 }
@@ -498,6 +521,7 @@ class _ImageWithLoadingState extends State<ImageWithLoading> {
     src = widget.src;
     height = widget.height;
     fit = widget.fit;
+    super.initState();
   }
 
   @override
