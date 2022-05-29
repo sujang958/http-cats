@@ -381,10 +381,8 @@ class _HttpCatListState extends State<HttpCatListPage> {
       backgroundColor: Colors.black,
       body: isCaching
           ? Center(
-              child: Transform.scale(
-                scale: 1.5,
-                child: CupertinoActivityIndicator(),
-              ),
+              child: CupertinoActivityIndicator(radius: 30.0,),
+              
             )
           : SafeArea(
               child: Container(
